@@ -1,0 +1,23 @@
+{
+  "name": "rx-atom",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "repl": "ts-node index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/ramda": "0.0.12",
+    "ts-loader": "^2.1.0",
+    "ts-node": "^3.0.6",
+    "typescript": "^2.3.4",
+    "webpack": "^2.6.1"
+  },
+  "dependencies": {
+    "ramda": "^0.24.1",
+    "rxjs": "^5.4.1"
+  }
+}
