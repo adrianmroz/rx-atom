@@ -6,9 +6,9 @@
     "start": "webpack --watch",
     "repl": "ts-node index.ts"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "github.com/adrianmroz",
+  "license": "MIT",
+  "description": "Atom implementation for ReactiveExtensions.js",
   "devDependencies": {
     "@types/ramda": "0.0.12",
     "ts-loader": "^2.1.0",
@@ -16,7 +16,7 @@
     "typescript": "^2.3.4",
     "webpack": "^2.6.1"
   },
-  "dependencies": {
+  "peerDependencies": {
     "ramda": "^0.24.1",
     "rxjs": "^5.4.1"
   }
