@@ -1,19 +1,30 @@
 {
   "name": "rx-atom",
   "version": "1.0.0",
-  "main": "dist/main.js",
-  "scripts": {
-    "start": "webpack --watch",
-    "repl": "ts-node index.ts"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/adrianmroz/rx-atom",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andiranmroz/rx-atom.git"
   },
-  "author": "github.com/adrianmroz",
+  "scripts": {
+    "precompile": "rimraf dist/",
+    "compile": "tsc",
+    "start": "webpack --watch",
+    "prepublish": "npm run compile",
+    "repl": "ts-node --inspect-brk index.ts"
+  },
+  "author": "https://github.com/adrianmroz",
   "license": "MIT",
   "description": "Atom implementation for ReactiveExtensions.js",
   "devDependencies": {
-    "@types/ramda": "0.0.12",
+    "ramda": "^0.24.1",
+    "rimraf": "^2.6.1",
+    "rxjs": "^5.4.1",
     "ts-loader": "^2.1.0",
     "ts-node": "^3.0.6",
-    "typescript": "^2.3.4",
+    "typescript": "^2.4.1",
     "webpack": "^2.6.1"
   },
   "peerDependencies": {
