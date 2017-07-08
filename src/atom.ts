@@ -1,6 +1,5 @@
-import { IAtom, Modifier, Projection } from './types';
+import { IAtom, Modifier, Projection, Lens, IViewable } from './types';
 import LensedAtom from './lensed-atom';
-import { Lens } from '@types/ramda';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -11,7 +10,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/map';
 
-export default class Atom<T> implements IAtom<T> {
+export default class Atom<T> implements IAtom<T>, IViewable<T> {
   private actions$: Subject<Modifier<T>> = new Subject<Modifier<T>>();
   protected value$: ConnectableObservable<T>;
   private sub: Subscription;
@@ -38,6 +37,6 @@ export default class Atom<T> implements IAtom<T> {
   }
 
   view<S>(lens: Lens): LensedAtom<S, T> {
-    return new LensedAtom(lens, this);
+    return new LensedAtom<S, T>(lens, this);
   }
 }

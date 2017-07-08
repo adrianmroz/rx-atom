@@ -1,10 +1,9 @@
 import Atom from './atom';
-import { IAtom, Modifier, Projection } from './types';
+import { IAtom, Modifier, Projection, Lens, IViewable } from './types';
 import { Observable } from 'rxjs/Observable';
 import { over, view, compose } from 'ramda';
-import { Lens } from '@types/ramda';
 
-export default class LensedAtom<T, S> implements IAtom<T> {
+export default class LensedAtom<T, S> implements IAtom<T>, IViewable<S> {
   constructor(private lens: Lens, private source: Atom<S>) {
   }
 
@@ -21,7 +20,7 @@ export default class LensedAtom<T, S> implements IAtom<T> {
   }
 
   view<A>(lens: Lens): LensedAtom<A, S> {
-    return new LensedAtom(compose(this.lens, lens) as Lens, this.source);
+    return new LensedAtom<A, S>(compose(this.lens, lens) as Lens, this.source);
   }
 }
 
