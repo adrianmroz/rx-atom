@@ -19,16 +19,17 @@
   "license": "MIT",
   "description": "Atom implementation for ReactiveExtensions.js",
   "devDependencies": {
-    "ramda": "^0.24.1",
+    "@most/core": "^1.2.3",
+    "@most/types": "^1.0.0",
+    "@types/seamless-immutable": "^7.1.1",
     "rimraf": "^2.6.1",
-    "rxjs": "^5.4.1",
+    "rxjs": "^6.1.0",
     "ts-loader": "^2.1.0",
     "ts-node": "^3.0.6",
-    "typescript": "^2.4.1",
+    "typescript": "^2.7.1",
     "webpack": "^2.6.1"
   },
   "peerDependencies": {
-    "ramda": "^0.24.1",
-    "rxjs": "^5.4.1"
+    "rxjs": "^6.1.0"
   }
 }

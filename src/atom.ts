@@ -1,42 +1,58 @@
-import { IAtom, Modifier, Projection, Lens, IViewable } from './types';
-import LensedAtom from './lensed-atom';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
-import { ConnectableObservable } from 'rxjs/observable/ConnectableObservable';
-import 'rxjs/add/operator/scan';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/publishReplay';
-import 'rxjs/add/operator/map';
+import { IAtom, IStream, Modifier, Unary } from './types';
+import { LensedAtom } from './lensed-atom';
+import { ILens } from './lens';
+import { Observable, Subject } from 'rxjs';
 
-export default class Atom<T> implements IAtom<T>, IViewable<T> {
-  private actions$: Subject<Modifier<T>> = new Subject<Modifier<T>>();
-  protected value$: ConnectableObservable<T>;
-  private sub: Subscription;
+export class Atom<T> implements IAtom<T>, IStream<T> {
 
-  constructor(init: T) {
-    this.value$ = this.actions$
-      .scan((value: T, fn: Modifier<T>) => fn(value), init)
-      .startWith(init)
-      .distinctUntilChanged()
-      .publishReplay(1);
-    this.sub = this.value$.connect();
+  private value$ = new Subject<T>();
+
+  constructor(private value: T) {
   }
 
-  get(): Observable<T> {
-    return this.value$;
+  destroy() {
+    this.value$.complete();
   }
 
-  modify(fn: Modifier<T>): void {
-    this.actions$.next(fn);
+  alter(fn: Modifier<T>): T {
+    const value = fn(this.value);
+    this.value = value;
+    this.value$.next(value);
+    return value;
   }
 
-  project<R>(projection: Projection<T, R>): Observable<R> {
-    return this.get().map(projection).distinctUntilChanged();
+  deref(): T {
+    return this.value;
   }
 
-  view<S>(lens: Lens): LensedAtom<S, T> {
-    return new LensedAtom<S, T>(lens, this);
+  view<A>(lens: ILens<T, A>): LensedAtom<A, T> {
+    return new LensedAtom<A, T>(lens, this);
+  }
+
+  stream(): Observable<T> {
+    return this.value$.asObservable();
+  }
+}
+
+export class StoredAtom<T> extends Atom<T> {
+  constructor(defaultValue: T, private key: string) {
+    super(JSON.parse(localStorage.getItem(key)) || defaultValue);
+    this.stream().subscribe(value => {
+      localStorage.setItem(key, JSON.stringify(value));
+    });
+  }
+}
+
+export class ConstrainedAtom<T> extends Atom<T | Error> {
+  constructor(value: T, private validator: Unary<T | Error, boolean>) {
+    super(validator(value) ? value : new Error());
+  }
+
+  alter(fn: Modifier<T | Error>): T | Error {
+    return super.alter(oldValue => {
+      const newValue = fn(oldValue);
+      const valid = this.validator(newValue);
+      return valid ? newValue : new Error();
+    });
   }
 }

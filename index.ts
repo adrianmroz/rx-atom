@@ -1,8 +1,6 @@
-import AtomDef from './src/atom';
-import StoredAtomDef from './src/stored-atom';
-import LensedAtomDef from './src/lensed-atom';
-
-export const Atom = AtomDef;
-export const StoredAtom = StoredAtomDef;
-export const LensedAtom = LensedAtomDef;
+export {Reference} from './src/types';
+export {Behaviour} from './src/behaviour';
+export {Atom} from './src/atom';
+export {LensedAtom} from './src/lensed-atom';
+export {Lens, over, view, set, compose, toGetter} from './src/lens';
 

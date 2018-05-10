@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Stream } from '@most/types';
 
 export type Unary<A, R> = (a: A) => R;
 export type Binary<A, B, R> = (a: A, b: B) => R;
@@ -10,10 +10,6 @@ export type Variadic<T, R> = (...xs: T[]) => R;
 
 export type Modifier<T> = Unary<T, T>;
 
-export interface IStream<T> {
-  stream(): Observable<T>;
-}
-
 export interface IRef<T> {
   deref(): T;
 }
@@ -23,11 +19,12 @@ export interface IAtom<T> extends IRef<T> {
 }
 
 export class Reference<T> implements IRef<T> {
-  constructor(private value: T) {}
+  constructor(private value: T) {
+  }
 
   deref(): T {
     return this.value;
   }
 }
 
-export type Dynamic<T> = IRef<T> & IStream<T>;
+export type Dynamic<T> = IRef<T> & Stream<T>;

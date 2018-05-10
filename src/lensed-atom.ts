@@ -1,26 +1,35 @@
-import Atom from './atom';
-import { IAtom, Modifier, Projection, Lens, IViewable } from './types';
-import { Observable } from 'rxjs/Observable';
-import { over, view, compose } from 'ramda';
+import { Atom } from './atom';
+import { IAtom, IStream, Modifier } from './types';
+import { compose, ILens, over, view } from './lens';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-export default class LensedAtom<T, S> implements IAtom<T>, IViewable<S> {
-  constructor(private lens: Lens, private source: Atom<S>) {
+export class LensedAtom<T, S> implements IAtom<T>, IStream<T> {
+
+  private subscription: Subscription;
+
+  constructor(private lens: ILens<S, T>, private source: Atom<S>) {
   }
 
-  get(): Observable<T> {
-    return this.source.project(view(this.lens));
+  destroy() {
+    this.subscription.unsubscribe();
   }
 
-  modify(fn: Modifier<T>): void {
-    this.source.modify(over(this.lens, fn));
+  alter(fn: Modifier<T>): T {
+    return view(this.lens, this.source.alter(over(this.lens, fn)));
   }
 
-  project<R>(projection: Projection<T, R>): Observable<R> {
-    return this.source.project((x: S) => projection(view(this.lens, x) as T));
+  deref(): T {
+    return view(this.lens, this.source.deref());
   }
 
-  view<A>(lens: Lens): LensedAtom<A, S> {
-    return new LensedAtom<A, S>(compose(this.lens, lens) as Lens, this.source);
+  view<A>(lens: ILens<T, A>): LensedAtom<A, S> {
+    const composed: ILens<S, A> = compose(this.lens, lens);
+    return new LensedAtom<A, S>(composed, this.source);
+  }
+
+  stream(): Observable<T> {
+    return this.source.stream().pipe(map(view(this.lens)));
   }
 }
 

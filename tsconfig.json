@@ -5,7 +5,7 @@
     "outDir": "dist/",
     "declaration": true,
     "sourceMap": true,
-    "lib": ["DOM", "es6"]
+    "lib": ["DOM", "es5", "es6"]
   },
   "include": ["index.ts"]
 }
